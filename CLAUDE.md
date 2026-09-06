@@ -133,12 +133,22 @@ El usuario cambió de foco profesional: ya no se presenta como "Full-Stack Devel
 - **Pendiente del usuario**: configurar esas 3 variables de entorno en el dashboard de Render (nunca deben vivir en el código/repo) y hacer un redeploy para que se cree el usuario.
 - Verificado localmente: `createsuperuser --noinput` con esas env vars crea el usuario correctamente; una segunda ejecución falla limpiamente sin afectar el resto del build gracias al `|| true`.
 
+## Cambios ya aplicados (2026-09-05, novena tanda — seed automático de proyectos)
+
+- La base de datos del nuevo servicio en Render está completamente vacía (los 14 proyectos, los 10 originales + los 4 de la séptima tanda, solo existían en la BD local del usuario).
+- Creado `core/management/commands/seed_projects.py`: management command que carga los 14 proyectos desde `core/fixtures/initial_projects.json` (exportado de la BD local), pero **solo si la tabla `Project` está vacía** (`if Project.objects.exists(): return`) — así no duplica en builds subsiguientes.
+- `build.sh` corre `python manage.py seed_projects` después de `migrate` y antes de la creación del superusuario.
+- Al exportar el fixture se corrigió de paso un dato desactualizado: el `demo_url` de "Portafolio (Actual)" apuntaba al dominio viejo de Render (`new-portfolio-c8yq.onrender.com`) — actualizado a `juan-diego-pino-portfolio.onrender.com`.
+- Las imágenes de los 10 proyectos originales (`projects/*.png`) ya estaban versionadas en `media/projects/` (ver quinta tanda), así que el seed las referencia correctamente por nombre de archivo; Django las asocia solo con `image=<ruta>` sin necesidad de volver a subir el binario.
+- Verificado localmente de forma segura: se respaldó la BD real (`db.sqlite3.bak`), se probó el comando en una BD nueva (`migrate` + `seed_projects`), se confirmó que una segunda ejecución no duplica, se verificaron los 14 registros (títulos con acentos correctos, imágenes, URLs) vía archivo de salida (no vía stdout, que corrompe acentos en esta terminal), y se restauró la BD real intacta al final.
+- **Este seed corre una sola vez por base de datos** (mientras esté vacía). Si en el futuro se quiere resetear datos de producción, hay que vaciar la tabla `Project` manualmente primero.
+
 ## Problemas conocidos / deuda técnica (pendientes)
 
 1. **Persistencia de datos dinámicos en Render**: SQLite + filesystem efímero implica pérdida de proyectos nuevos cargados vía admin (y de imágenes subidas ahí) en cada deploy/restart. Las imágenes de los 10 proyectos actuales ya están resueltas (versionadas en `media/projects/`, servidas por `MediaWhiteNoiseMiddleware`), pero cualquier proyecto **nuevo** agregado desde el admin en producción se perderá. Recomendado a futuro: Postgres (Render lo ofrece gratis) + storage externo (S3/Cloudinary) para uploads dinámicos.
 2. Ruta de admin personalizada (`/admin_portfolio_jdp/`) — está bien como medida de oscurecimiento, pero no reemplaza autenticación fuerte.
 3. `og:image` usa `profile.jpg` (800x800, cuadrada) en vez de un banner 1200x630 dedicado — mejora opcional, no urgente.
-4. Los 4 proyectos nuevos de la séptima tanda solo existen en la BD local; deben cargarse manualmente en el admin de producción (ver esa sección para los datos exactos de cada uno).
+4. Recordar: el `render.yaml` con `DJANGO_SUPERUSER_PASSWORD` en las env vars de Render debería limpiarse/rotarse después del primer login exitoso al admin, para no dejar la contraseña real visible ahí indefinidamente.
 
 ## Convenciones / notas
 

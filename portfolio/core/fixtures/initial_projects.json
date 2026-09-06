@@ -1,0 +1,128 @@
+[
+  {
+    "title": "Renombrador de Documentos por Contenido",
+    "description": "Automatización que revisa documentos de forma individual, extrae datos relevantes de su contenido y renombra cada archivo según esa información, eliminando el proceso manual de identificación y renombrado.",
+    "technologies": "Python, IA Generativa",
+    "github_url": "",
+    "demo_url": "",
+    "order": -4,
+    "image": ""
+  },
+  {
+    "title": "Robot Clasificador de Documentos con IA",
+    "description": "Robot de automatización que clasifica documentos según su entidad usando la API de Claude, y gestiona su flujo completo: registro en base de datos SQL Server y almacenamiento en SharePoint si es válido, o descarte controlado si es rechazado o presenta errores.",
+    "technologies": "Python, Claude API, SQL Server, SharePoint",
+    "github_url": "",
+    "demo_url": "",
+    "order": -3,
+    "image": ""
+  },
+  {
+    "title": "Módulo de Logs para Robot Clasificador",
+    "description": "Módulo desarrollado para una aplicación interna de la empresa que permite a los usuarios consultar los resultados y logs generados por el robot clasificador de documentos.",
+    "technologies": "C#, .NET, Angular",
+    "github_url": "",
+    "demo_url": "",
+    "order": -2,
+    "image": ""
+  },
+  {
+    "title": "Renombrador de Archivos Configurable",
+    "description": "Evolución del primer renombrador, generalizado para adaptarse a cualquier tipo de documento según reglas de configuración, ampliando su uso más allá del caso original.",
+    "technologies": "Python, IA Generativa",
+    "github_url": "",
+    "demo_url": "",
+    "order": -1,
+    "image": ""
+  },
+  {
+    "title": "Portafolio (Actual)",
+    "description": "Página portafolio nueva hecha en Django",
+    "technologies": "Django",
+    "github_url": "https://github.com/Pino835/new_portfolio",
+    "demo_url": "https://juan-diego-pino-portfolio.onrender.com/",
+    "order": 1,
+    "image": "projects/portafolio.png"
+  },
+  {
+    "title": "Curriculum Vitae",
+    "description": "Página de mi perfil profesional creada en React.js",
+    "technologies": "React",
+    "github_url": "https://github.com/Pino835/mypage_project",
+    "demo_url": "https://pino835.github.io/mypage_project/",
+    "order": 2,
+    "image": "projects/pagina.png"
+  },
+  {
+    "title": "SPIDERVERSE",
+    "description": "Página temática de SPIDERVERSE hecha Django.",
+    "technologies": "Django",
+    "github_url": "https://github.com/Pino835/SPIDERVERSE",
+    "demo_url": "",
+    "order": 3,
+    "image": "projects/spider.png"
+  },
+  {
+    "title": "Tester de Videojuegos",
+    "description": "Página de perfil como profesional en testeo de videojuegos hecha en Next.js",
+    "technologies": "Next.js",
+    "github_url": "https://github.com/Pino835/game-tester-portfolio",
+    "demo_url": "",
+    "order": 4,
+    "image": "projects/tester.png"
+  },
+  {
+    "title": "Gestor de Limpieza",
+    "description": "Página para la gestión de limpieza a domicilio hecha en Next.js",
+    "technologies": "Next.js",
+    "github_url": "https://github.com/Pino835/cleaning_website",
+    "demo_url": "",
+    "order": 5,
+    "image": "projects/clean.png"
+  },
+  {
+    "title": "API",
+    "description": "API básico hecho en .NET",
+    "technologies": ".NET",
+    "github_url": "https://github.com/Pino835/TodoJwtApi",
+    "demo_url": "",
+    "order": 6,
+    "image": "projects/api.png"
+  },
+  {
+    "title": "Portafolio",
+    "description": "Página de mi perfil profesional con proyectos personales hecha en Django.",
+    "technologies": "Django",
+    "github_url": "https://github.com/Pino835/portfolio_project",
+    "demo_url": "",
+    "order": 7,
+    "image": "projects/portfolio.png"
+  },
+  {
+    "title": "Sitio de Barbería",
+    "description": "Página con temática de Barbería para la reservación de citas hecha en Django.",
+    "technologies": "Django",
+    "github_url": "https://github.com/Pino835/barber_project",
+    "demo_url": "",
+    "order": 8,
+    "image": "projects/barber.png"
+  },
+  {
+    "title": "Gestor de Gastos",
+    "description": "Gestor de Gastos",
+    "technologies": "Django",
+    "github_url": "https://github.com/Pino835/gastos_project",
+    "demo_url": "",
+    "order": 9,
+    "image": "projects/gastos.png"
+  },
+  {
+    "title": "Portafolio de IA",
+    "description": "Sitio web programa en Django para ofrecer servicios de generación de contenido con IA",
+    "technologies": "Django",
+    "github_url": "https://github.com/Pino835/new_portfolio",
+    "demo_url": "https://pino835.github.io/ai_portfolio/",
+    "order": 10,
+    "image": "projects/ia.png"
+  }
+]

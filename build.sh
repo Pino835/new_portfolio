@@ -7,6 +7,10 @@ cd portfolio
 python manage.py collectstatic --noinput
 python manage.py migrate
 
+# Carga los proyectos iniciales solo si la tabla esta vacia (no duplica en
+# builds siguientes).
+python manage.py seed_projects
+
 # Crea el superusuario del admin si no existe todavia. Requiere las env vars
 # DJANGO_SUPERUSER_USERNAME, DJANGO_SUPERUSER_EMAIL y DJANGO_SUPERUSER_PASSWORD
 # configuradas en el dashboard de Render (nunca en el codigo). Si ya existe un
