@@ -5,7 +5,7 @@ Registro vivo del proyecto. Actualizar esta guía conforme se hagan cambios rele
 ## Qué es
 
 Portafolio profesional personal (perfil de TI) construido con Django 6.0, desplegado en Render:
-https://new-portfolio-c8yq.onrender.com
+https://juan-diego-pino-portfolio.onrender.com
 
 Es un sitio de una sola página (`HomeView`, `index.html`) que muestra un CV/perfil y una lista de proyectos, administrable desde el admin de Django.
 
@@ -110,6 +110,21 @@ Verificado: arranca sin errores (`manage.py check` limpio) y responde 200 en `ht
 - Solución: `core/middleware.py` define `MediaWhiteNoiseMiddleware`, una subclase de `WhiteNoiseMiddleware` que además registra `MEDIA_ROOT` con `add_files(..., prefix=MEDIA_URL)` en su `__init__`. Reemplaza a `whitenoise.middleware.WhiteNoiseMiddleware` en `MIDDLEWARE` (`settings.py`). Justificación: las imágenes de proyectos son contenido fijo versionado en git, no uploads dinámicos, así que tiene sentido servirlas igual que los estáticos.
 - Verificado localmente simulando producción (`DEBUG=False python manage.py runserver`): `/`, `/static/css/style.css`, `/static/images/favicon.ico` y `/media/projects/portafolio.png` responden 200. Tests 5/5 OK.
 - **Importante**: si en el futuro se agregan uploads dinámicos reales vía admin (no solo estas 10 imágenes fijas), este middleware seguiría sirviéndolos también — pero recordar que en Render el filesystem es efímero, así que un upload nuevo se serviría hasta el próximo restart/deploy y luego desaparecería (ver punto de Postgres/S3 pendiente abajo).
+
+## Cambios ya aplicados (2026-09-05, séptima tanda — reposicionamiento profesional)
+
+El usuario cambió de foco profesional: ya no se presenta como "Full-Stack Developer / Especialista en Ciberseguridad", sino como profesional que dirige herramientas de IA (Claude, Claude Code) para construir, auditar y documentar software real, aplicando buenas prácticas de TI. Contexto: tiene un trabajo actual no técnico (Auxiliar Administrativo) donde, por iniciativa propia, construyó automatizaciones internas usando IA.
+
+- **Hero/tagline**: cambiado de "Full-Stack Developer | Especialista en Ciberseguridad" a "Desarrollo y Automatización Asistidos por IA". Se decidió explícitamente NO mencionar Ciberseguridad en el tagline principal (sigue apareciendo en experiencia/habilidades como parte de su trayectoria, pero no como foco actual).
+- **Sección Sobre Mí**: reescrita para reflejar el nuevo enfoque (dirige herramientas de IA como parte del flujo de trabajo, no busca roles de desarrollador tradicional).
+- **Nueva experiencia laboral** (primera en la lista, la más reciente): Auxiliar Administrativo, Grupo Inteca / Mercasa, jul. 2026 - Presente. Describe 4 logros/proyectos de automatización hechos con IA como parte de ese rol.
+- **4 proyectos nuevos agregados a la base de datos** (`order` -4 a -1, para que aparezcan primero que los 10 existentes): Renombrador de Documentos por Contenido, Robot Clasificador de Documentos con IA (Claude API + SQL Server + SharePoint), Módulo de Logs para Robot Clasificador (.NET + Angular), Renombrador de Archivos Configurable. Son proyectos internos de la empresa — sin repos/demos públicos por confidencialidad, solo descripción y tecnologías.
+- **Habilidades**: agregado Claude, Claude Code (sección IA) y Angular (sección Frameworks & Backend).
+- **Email corregido**: de `pino2002@gmail.com` (typo introducido en una tanda anterior) a `pinoto2002@gmail.com` (el correcto, confirmado contra el CV real del usuario).
+- **CTA de contacto**: cambiado de "disponible para nuevas oportunidades como Full Stack Developer o Security Analyst" a "abierto a colaborar en proyectos de automatización, desarrollo asistido por IA o consultoría" — ya no busca empleo activamente (tiene trabajo actual).
+- Meta tags (`<title>`, `description`, `keywords`, Open Graph, Twitter Card) y footer actualizados al nuevo posicionamiento ("Profesional en Informática" en vez de "Ingeniero Informático").
+- **Dato importante de esta sesión**: al crear los 4 proyectos nuevos vía `manage.py shell -c "..."` en Git Bash/Windows, los caracteres acentuados (á, é, í, ó, ú) se corrompieron en SQLite por un problema de codepage de la terminal (no de Django/SQLite). Hubo que corregir escribiendo el contenido a un archivo `.py` en UTF-8 y ejecutándolo con `exec(open(..., encoding='utf-8').read())` dentro del shell. **Para cualquier alta de datos futura con texto acentuado desde este entorno de terminal, usar ese patrón (archivo + exec), nunca `-c` inline con acentos.**
+- Verificado en local: `manage.py check` limpio, tests 5/5 OK, títulos y descripciones con encoding correcto confirmados vía archivo (no vía stdout de la terminal, que los muestra mal aunque estén bien guardados).
 
 ## Problemas conocidos / deuda técnica (pendientes)
 
