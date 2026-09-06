@@ -148,7 +148,11 @@ El usuario cambió de foco profesional: ya no se presenta como "Full-Stack Devel
 1. **Persistencia de datos dinámicos en Render**: SQLite + filesystem efímero implica pérdida de proyectos nuevos cargados vía admin (y de imágenes subidas ahí) en cada deploy/restart. Las imágenes de los 10 proyectos actuales ya están resueltas (versionadas en `media/projects/`, servidas por `MediaWhiteNoiseMiddleware`), pero cualquier proyecto **nuevo** agregado desde el admin en producción se perderá. Recomendado a futuro: Postgres (Render lo ofrece gratis) + storage externo (S3/Cloudinary) para uploads dinámicos.
 2. Ruta de admin personalizada (`/admin_portfolio_jdp/`) — está bien como medida de oscurecimiento, pero no reemplaza autenticación fuerte.
 3. `og:image` usa `profile.jpg` (800x800, cuadrada) en vez de un banner 1200x630 dedicado — mejora opcional, no urgente.
-4. Recordar: el `render.yaml` con `DJANGO_SUPERUSER_PASSWORD` en las env vars de Render debería limpiarse/rotarse después del primer login exitoso al admin, para no dejar la contraseña real visible ahí indefinidamente.
+
+## Estado confirmado en producción (2026-09-05)
+
+- Servicio nuevo publicado y funcionando: https://juan-diego-pino-portfolio.onrender.com — home 200, admin accesible (login), 14 proyectos cargados correctamente vía `seed_projects` (incluidos los 4 nuevos: Renombrador, Robot Clasificador, Módulo de Logs, Renombrador Configurable).
+- Superusuario del admin creado exitosamente con las env vars; el usuario ya confirmó login y **eliminó `DJANGO_SUPERUSER_PASSWORD` del dashboard de Render** tras el primer acceso (buena práctica, ya no queda la contraseña real expuesta ahí).
 
 ## Convenciones / notas
 
