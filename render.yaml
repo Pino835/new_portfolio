@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: juan-diego-pino-portfolio
+    runtime: python
+    plan: free
+    buildCommand: "./build.sh"
+    startCommand: "gunicorn portfolio.wsgi:application --chdir portfolio"
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.13.0
+      - key: SECRET_KEY
+        generateValue: true
+      - key: DEBUG
+        value: "False"
+      - key: ALLOWED_HOSTS
+        value: juan-diego-pino-portfolio.onrender.com

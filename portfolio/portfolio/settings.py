@@ -28,7 +28,7 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 
 ALLOWED_HOSTS = config(
     'ALLOWED_HOSTS',
-    default='localhost,127.0.0.1,new-portfolio-c8yq.onrender.com',
+    default='localhost,127.0.0.1,juan-diego-pino-portfolio.onrender.com',
     cast=lambda v: [h.strip() for h in v.split(',')],
 )
 

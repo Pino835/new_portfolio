@@ -56,12 +56,12 @@ Verificado: arranca sin errores (`manage.py check` limpio) y responde 200 en `ht
 
 ## Despliegue
 
-- Plataforma: **Render**, dominio `new-portfolio-c8yq.onrender.com`.
-- `ALLOWED_HOSTS` ahora se lee de la variable de entorno `ALLOWED_HOSTS` (lista separada por comas), con default `localhost,127.0.0.1,new-portfolio-c8yq.onrender.com`. En Render, configurar la env var si se agrega un dominio propio.
-- Estáticos servidos con **Whitenoise** (`whitenoise.middleware.WhiteNoiseMiddleware` + `CompressedManifestStaticFilesStorage`). En el build de Render hay que correr `python manage.py collectstatic --noinput` (agregar al build command si no está).
-- `MEDIA_ROOT`/`MEDIA_URL` configurados (`portfolio/media/`), pero **ojo**: el filesystem de Render es efímero — los archivos subidos vía admin (`Project.image`) se pierden en cada redeploy. Si se quiere persistencia real, considerar un storage externo (S3, Cloudinary) más adelante.
-- No hay `Procfile`, `build.sh` ni `render.yaml` en el repo — la configuración de build/start command vive solo en el dashboard de Render. Pendiente: documentar o versionar esos comandos.
-- Sigue usando SQLite (`db.sqlite3`) como base de datos, ahora sin versionar en git. En Render con filesystem efímero esto significa que **los datos (proyectos cargados vía admin) no persisten entre deploys** — es la limitación más importante a resolver a futuro (migrar a Postgres, p.ej. Render Postgres free tier).
+- Plataforma: **Render**. Servicio anterior (`new-portfolio-c8yq.onrender.com`) fue eliminado por el usuario; nuevo servicio planeado con nombre `juan-diego-pino-portfolio` (dominio final: `juan-diego-pino-portfolio.onrender.com`).
+- `ALLOWED_HOSTS` se lee de la variable de entorno `ALLOWED_HOSTS` (lista separada por comas), default actualizado a `localhost,127.0.0.1,juan-diego-pino-portfolio.onrender.com`.
+- Estáticos servidos con **Whitenoise** (`whitenoise.middleware.WhiteNoiseMiddleware` + `CompressedManifestStaticFilesStorage`).
+- `MEDIA_ROOT`/`MEDIA_URL` configurados (`portfolio/media/`). Las imágenes de los 10 proyectos ya están versionadas en git (`media/projects/`, ver tanda anterior) así que sobreviven a redeploys; solo los uploads *nuevos* vía admin se seguirían perdiendo por el filesystem efímero.
+- **Build/deploy ahora versionado en código** (`build.sh` + `render.yaml` en la raíz del repo) en vez de vivir solo en el dashboard — ver sección siguiente.
+- Base de datos: **SQLite por decisión explícita del usuario** (por ahora). Los proyectos cargados desde el admin en producción se perderán en cada redeploy hasta que se migre a Postgres — queda documentado como pendiente, no como bug urgente.
 
 ## Cambios ya aplicados (2026-09-05)
 
@@ -94,6 +94,15 @@ Verificado: arranca sin errores (`manage.py check` limpio) y responde 200 en `ht
 - Al mover las imágenes se aprovechó para comprimirlas: redimensionadas a máx. 1200px de ancho (eran ~1900px) y reoptimizadas como PNG. Total: 5.87MB → 2.89MB (~51% menos), sin pérdida visible de calidad.
 - `.gitignore` ajustado: `media/` se ignora en general (para uploads futuros vía admin) pero con excepción explícita `!media/projects/` — estas imágenes son contenido fijo del sitio (no uploads de usuario) y deben persistir en cada deploy de Render, ya que el filesystem ahí es efímero.
 - Verificado en local: `manage.py check` limpio, tests 5/5 OK, imagen de proyecto responde 200 en `/media/projects/portafolio.png`.
+
+## Cambios ya aplicados (2026-09-05, quinta tanda — nuevo servicio en Render)
+
+- El usuario eliminó el servicio anterior de Render y creará uno nuevo. Preparado el repo para deploy reproducible por código:
+  - `build.sh` (raíz): instala dependencias, corre `collectstatic` y `migrate`.
+  - `render.yaml` (raíz): define el web service (`juan-diego-pino-portfolio`, plan free, runtime Python), build/start command, y env vars (`SECRET_KEY` autogenerado, `DEBUG=False`, `ALLOWED_HOSTS`).
+  - `gunicorn==26.2.0` agregado a `requirements.txt` (servidor WSGI de producción; no se puede probar en Windows local por depender de `fcntl`, pero Render corre Linux).
+  - `ALLOWED_HOSTS` default en `settings.py` actualizado al nuevo dominio esperado.
+- **Pasos manuales pendientes del usuario en el dashboard de Render** (no automatizables desde aquí): crear el nuevo Web Service apuntando a este repo de GitHub, confirmar que detecte `render.yaml` (Render soporta "Blueprint" a partir de ese archivo) o configurar manualmente build/start command si se prefiere no usar Blueprints.
 
 ## Problemas conocidos / deuda técnica (pendientes)
 
