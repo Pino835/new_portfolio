@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /admin_portfolio_jdp/
+
+Sitemap: {{ request.scheme }}://{{ request.get_host }}/sitemap.xml

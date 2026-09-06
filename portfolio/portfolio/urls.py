@@ -18,10 +18,12 @@ from django.contrib import admin
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-from core.views import HomeView
+from core.views import HomeView, RobotsTxtView, SitemapXmlView
 
 urlpatterns = [
     path('admin_portfolio_jdp/', admin.site.urls),
+    path('robots.txt', RobotsTxtView.as_view(), name='robots'),
+    path('sitemap.xml', SitemapXmlView.as_view(), name='sitemap'),
     path('', HomeView.as_view(), name='home'),
 ]
 

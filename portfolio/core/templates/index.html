@@ -8,7 +8,21 @@
     <meta name="description" content="Portafolio profesional de Juan Diego Pino. Ingeniero Informático especializado en Full-Stack Development y Ciberseguridad.">
     <meta name="keywords" content="Juan Diego Pino, Ingeniero Informático, Full-Stack Developer, Ciberseguridad, Python, Django">
     <meta name="author" content="Juan Diego Pino">
-    
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Portafolio de Juan Diego Pino - Ingeniero Informático">
+    <meta property="og:description" content="Portafolio profesional de Juan Diego Pino. Ingeniero Informático especializado en Full-Stack Development y Ciberseguridad.">
+    <meta property="og:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'img/profile.jpg' %}">
+    <meta property="og:url" content="{{ request.scheme }}://{{ request.get_host }}/">
+    <meta property="og:locale" content="es_ES">
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Portafolio de Juan Diego Pino - Ingeniero Informático">
+    <meta name="twitter:description" content="Portafolio profesional de Juan Diego Pino. Ingeniero Informático especializado en Full-Stack Development y Ciberseguridad.">
+    <meta name="twitter:image" content="{{ request.scheme }}://{{ request.get_host }}{% static 'img/profile.jpg' %}">
+
     <!-- Favicon -->
     <link rel="icon" type="image/x-icon" href="{% static 'images/favicon.ico' %}">
     

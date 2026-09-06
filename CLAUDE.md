@@ -80,13 +80,19 @@ Verificado: arranca sin errores (`manage.py check` limpio) y responde 200 en `ht
 - `core/tests.py` estaba vacío (solo boilerplate). Se agregaron pruebas para `HomeView` (200 OK, template correcto, orden de proyectos) y para `Project.get_technologies_list()` / `__str__`.
 - **Dato importante para tests/CI**: con `CompressedManifestStaticFilesStorage` (Whitenoise), los tests que rendericen templates con `{% static %}` fallan si no existe el manifest de `staticfiles/`. Hay que correr `python manage.py collectstatic --noinput` antes de `python manage.py test`.
 
+## Cambios ya aplicados (2026-09-05, tercera tanda — SEO y Open Graph)
+
+- Agregados meta tags Open Graph (`og:type`, `og:title`, `og:description`, `og:image`, `og:url`, `og:locale`) y Twitter Card (`twitter:card`, `twitter:title`, `twitter:description`, `twitter:image`) en `index.html`, usando `profile.jpg` como imagen. Las URLs se construyen dinámicamente con `{{ request.scheme }}://{{ request.get_host }}` para que funcionen igual en local y en producción sin hardcodear el dominio.
+- Agregado `robots.txt` (`core/templates/robots.txt`) y `sitemap.xml` (`core/templates/sitemap.xml`) servidos vía `TemplateView` con `content_type` correcto (`core/views.py`: `RobotsTxtView`, `SitemapXmlView`), registrados en `portfolio/urls.py` en `/robots.txt` y `/sitemap.xml`. `robots.txt` bloquea `/admin_portfolio_jdp/` y apunta al sitemap.
+- Verificado en local: ambos endpoints responden 200 con contenido correcto y URLs absolutas dinámicas.
+
 ## Problemas conocidos / deuda técnica (pendientes)
 
 1. **Persistencia de datos en Render**: SQLite + filesystem efímero implica pérdida de proyectos/imágenes subidas en cada deploy. Recomendado: Postgres (Render lo ofrece gratis) + storage externo para media si se siguen subiendo imágenes vía admin.
 2. **`portfolio/projects/*.png`**: imágenes sueltas en una carpeta que no coincide con `MEDIA_ROOT` — pendiente confirmar si son legado de una versión anterior del modelo (antes de que existiera `Project.image`) y si se pueden eliminar.
 3. No hay `render.yaml`/`Procfile` versionado — el build/start command de Render no está documentado en el repo. Falta confirmar que el build command incluya `pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate`.
 4. Ruta de admin personalizada (`/admin_portfolio_jdp/`) — está bien como medida de oscurecimiento, pero no reemplaza autenticación fuerte.
-5. **Mejoras pendientes de la siguiente tanda**: falta `robots.txt`/`sitemap.xml` para SEO, meta tags Open Graph/Twitter Card para previews al compartir el link, CSS/JS inline en el HTML que podría moverse a clases, código muerto de `gtag` en `main.js` (referenciado pero nunca cargado — decidir si se agrega GA o se elimina), optimización de imágenes de proyectos.
+5. **Mejoras pendientes de la siguiente tanda**: CSS/JS inline en el HTML que podría moverse a clases, código muerto de `gtag` en `main.js` (referenciado pero nunca cargado — decidir si se agrega GA o se elimina), optimización de imágenes de proyectos, `og:image` usa `profile.jpg` (800x800, cuadrada) en vez de un banner 1200x630 dedicado.
 
 ## Convenciones / notas
 

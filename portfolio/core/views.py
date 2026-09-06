@@ -5,8 +5,18 @@ from .models import Project
 class HomeView(TemplateView):
     """Vista principal del portafolio"""
     template_name = 'index.html'
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['projects'] = Project.objects.all()
         return context
+
+
+class RobotsTxtView(TemplateView):
+    template_name = 'robots.txt'
+    content_type = 'text/plain'
+
+
+class SitemapXmlView(TemplateView):
+    template_name = 'sitemap.xml'
+    content_type = 'application/xml'
