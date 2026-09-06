@@ -126,11 +126,19 @@ El usuario cambió de foco profesional: ya no se presenta como "Full-Stack Devel
 - **Dato importante de esta sesión**: al crear los 4 proyectos nuevos vía `manage.py shell -c "..."` en Git Bash/Windows, los caracteres acentuados (á, é, í, ó, ú) se corrompieron en SQLite por un problema de codepage de la terminal (no de Django/SQLite). Hubo que corregir escribiendo el contenido a un archivo `.py` en UTF-8 y ejecutándolo con `exec(open(..., encoding='utf-8').read())` dentro del shell. **Para cualquier alta de datos futura con texto acentuado desde este entorno de terminal, usar ese patrón (archivo + exec), nunca `-c` inline con acentos.**
 - Verificado en local: `manage.py check` limpio, tests 5/5 OK, títulos y descripciones con encoding correcto confirmados vía archivo (no vía stdout de la terminal, que los muestra mal aunque estén bien guardados).
 
+## Cambios ya aplicados (2026-09-05, octava tanda — recuperar acceso al admin)
+
+- El usuario eliminó el servicio anterior de Render sin conservar las credenciales del superusuario del admin, y el nuevo servicio (base de datos SQLite nueva) no tiene ningún usuario.
+- `build.sh` ahora crea automáticamente un superusuario en cada build si no existe, usando `python manage.py createsuperuser --noinput`, que lee las variables de entorno estándar de Django: `DJANGO_SUPERUSER_USERNAME`, `DJANGO_SUPERUSER_EMAIL`, `DJANGO_SUPERUSER_PASSWORD`. El comando se ejecuta solo si `DJANGO_SUPERUSER_USERNAME` está seteada, y con `|| true` para no romper el build si el usuario ya existe (falla con exit 1 en ese caso, comportamiento nativo de Django).
+- **Pendiente del usuario**: configurar esas 3 variables de entorno en el dashboard de Render (nunca deben vivir en el código/repo) y hacer un redeploy para que se cree el usuario.
+- Verificado localmente: `createsuperuser --noinput` con esas env vars crea el usuario correctamente; una segunda ejecución falla limpiamente sin afectar el resto del build gracias al `|| true`.
+
 ## Problemas conocidos / deuda técnica (pendientes)
 
 1. **Persistencia de datos dinámicos en Render**: SQLite + filesystem efímero implica pérdida de proyectos nuevos cargados vía admin (y de imágenes subidas ahí) en cada deploy/restart. Las imágenes de los 10 proyectos actuales ya están resueltas (versionadas en `media/projects/`, servidas por `MediaWhiteNoiseMiddleware`), pero cualquier proyecto **nuevo** agregado desde el admin en producción se perderá. Recomendado a futuro: Postgres (Render lo ofrece gratis) + storage externo (S3/Cloudinary) para uploads dinámicos.
 2. Ruta de admin personalizada (`/admin_portfolio_jdp/`) — está bien como medida de oscurecimiento, pero no reemplaza autenticación fuerte.
 3. `og:image` usa `profile.jpg` (800x800, cuadrada) en vez de un banner 1200x630 dedicado — mejora opcional, no urgente.
+4. Los 4 proyectos nuevos de la séptima tanda solo existen en la BD local; deben cargarse manualmente en el admin de producción (ver esa sección para los datos exactos de cada uno).
 
 ## Convenciones / notas
 
