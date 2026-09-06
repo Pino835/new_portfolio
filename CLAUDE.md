@@ -30,7 +30,7 @@ new_portfolio/
         ├── templates/index.html
         ├── static/{css,js,img,docs}
         └── migrations/
-    └── projects/             # imágenes sueltas de proyectos (png) — no es MEDIA_ROOT actualmente usado
+    └── media/projects/       # imágenes de los 10 proyectos (versionadas, ver Cambios cuarta tanda)
 ```
 
 ## Modelo de datos
@@ -86,13 +86,21 @@ Verificado: arranca sin errores (`manage.py check` limpio) y responde 200 en `ht
 - Agregado `robots.txt` (`core/templates/robots.txt`) y `sitemap.xml` (`core/templates/sitemap.xml`) servidos vía `TemplateView` con `content_type` correcto (`core/views.py`: `RobotsTxtView`, `SitemapXmlView`), registrados en `portfolio/urls.py` en `/robots.txt` y `/sitemap.xml`. `robots.txt` bloquea `/admin_portfolio_jdp/` y apunta al sitemap.
 - Verificado en local: ambos endpoints responden 200 con contenido correcto y URLs absolutas dinámicas.
 
+## Cambios ya aplicados (2026-09-05, cuarta tanda — limpieza CSS/JS, bug de imágenes y optimización)
+
+- Eliminado código muerto de analytics en `main.js` (`trackEvent`/`gtag`): nunca se ejecutaba porque Google Analytics no estaba cargado en el HTML. Decisión: eliminar en vez de completar la integración (no había GA4 real que conectar).
+- Movidos todos los `style="..."` inline de `index.html` a clases nuevas en `style.css` (`.hero-description-muted`, `.section-subtitle`, `.project-image-placeholder`, `.projects-empty`, `.contact-message-action`), reutilizando las variables de color existentes (`--text-muted`, `--primary-cyan`, etc.) en vez de repetir hex codes.
+- **Bug encontrado y corregido**: las imágenes de los 10 proyectos (`Project.image`) apuntaban a `projects/*.png` relativo a `MEDIA_ROOT`, pero los archivos reales vivían en `portfolio/projects/` (fuera de `MEDIA_ROOT`, que ahora es `portfolio/media/`) — daban 404 tanto en local como probablemente en producción. Se movieron a `portfolio/media/projects/` (coincide con las rutas ya guardadas en la BD, no hizo falta tocar los registros).
+- Al mover las imágenes se aprovechó para comprimirlas: redimensionadas a máx. 1200px de ancho (eran ~1900px) y reoptimizadas como PNG. Total: 5.87MB → 2.89MB (~51% menos), sin pérdida visible de calidad.
+- `.gitignore` ajustado: `media/` se ignora en general (para uploads futuros vía admin) pero con excepción explícita `!media/projects/` — estas imágenes son contenido fijo del sitio (no uploads de usuario) y deben persistir en cada deploy de Render, ya que el filesystem ahí es efímero.
+- Verificado en local: `manage.py check` limpio, tests 5/5 OK, imagen de proyecto responde 200 en `/media/projects/portafolio.png`.
+
 ## Problemas conocidos / deuda técnica (pendientes)
 
-1. **Persistencia de datos en Render**: SQLite + filesystem efímero implica pérdida de proyectos/imágenes subidas en cada deploy. Recomendado: Postgres (Render lo ofrece gratis) + storage externo para media si se siguen subiendo imágenes vía admin.
-2. **`portfolio/projects/*.png`**: imágenes sueltas en una carpeta que no coincide con `MEDIA_ROOT` — pendiente confirmar si son legado de una versión anterior del modelo (antes de que existiera `Project.image`) y si se pueden eliminar.
-3. No hay `render.yaml`/`Procfile` versionado — el build/start command de Render no está documentado en el repo. Falta confirmar que el build command incluya `pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate`.
-4. Ruta de admin personalizada (`/admin_portfolio_jdp/`) — está bien como medida de oscurecimiento, pero no reemplaza autenticación fuerte.
-5. **Mejoras pendientes de la siguiente tanda**: CSS/JS inline en el HTML que podría moverse a clases, código muerto de `gtag` en `main.js` (referenciado pero nunca cargado — decidir si se agrega GA o se elimina), optimización de imágenes de proyectos, `og:image` usa `profile.jpg` (800x800, cuadrada) en vez de un banner 1200x630 dedicado.
+1. **Persistencia de datos dinámicos en Render**: SQLite + filesystem efímero implica pérdida de proyectos nuevos cargados vía admin (y de imágenes subidas ahí) en cada deploy. Las imágenes de los 10 proyectos actuales ya están resueltas (versionadas en `media/projects/`), pero cualquier proyecto **nuevo** agregado desde el admin en producción se perderá al redeployar. Recomendado a futuro: Postgres (Render lo ofrece gratis) + storage externo (S3/Cloudinary) para uploads dinámicos.
+2. No hay `render.yaml`/`Procfile` versionado — el build/start command de Render no está documentado en el repo. Falta confirmar que el build command incluya `pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate`.
+3. Ruta de admin personalizada (`/admin_portfolio_jdp/`) — está bien como medida de oscurecimiento, pero no reemplaza autenticación fuerte.
+4. `og:image` usa `profile.jpg` (800x800, cuadrada) en vez de un banner 1200x630 dedicado — mejora opcional, no urgente.
 
 ## Convenciones / notas
 

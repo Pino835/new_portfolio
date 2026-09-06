@@ -62,7 +62,7 @@
                 Full-Stack Developer | Especialista en Ciberseguridad | Apasionado por IA y Automatizaciones
             </p>
             
-            <p class="hero-description" style="font-size: 0.95rem; color: #a0a0c0;">
+            <p class="hero-description hero-description-muted">
                 Desarrollador Full-Stack especializado en Python/Django con experiencia en auditorías de seguridad. 
                 Busco roles donde pueda combinar mis habilidades técnicas con mi pasión por crear soluciones seguras y escalables.
             </p>
@@ -166,7 +166,7 @@
             </div>
             
             <!-- EXPERIENCE -->
-            <h3 class="neon-magenta" style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;">Experiencia</h3>
+            <h3 class="neon-magenta section-subtitle">Experiencia</h3>
             <div class="experience-timeline">
                 <div class="experience-item">
                     <h4>Técnico en Operaciones Computacionales</h4>
@@ -202,7 +202,7 @@
             </div>
             
             <!-- EDUCATION -->
-            <h3 class="neon-magenta" style="text-align: center; margin-top: 3rem; margin-bottom: 2rem;">Educación</h3>
+            <h3 class="neon-magenta section-subtitle">Educación</h3>
             <div class="education-grid">
                 <div class="education-card">
                     <h4>Estudios Superiores en IA y Automatizaciones</h4>
@@ -239,7 +239,7 @@
                     {% if project.image %}
                     <img src="{{ project.image.url }}" alt="{{ project.title }}" class="project-image">
                     {% else %}
-                    <div class="project-image" style="background: linear-gradient(135deg, #00ffff, #ff00ff); display: flex; align-items: center; justify-content: center; color: #0a0a0a; font-weight: bold;">
+                    <div class="project-image project-image-placeholder">
                         {{ project.title }}
                     </div>
                     {% endif %}
@@ -269,7 +269,7 @@
                     </div>
                 </div>
                 {% empty %}
-                <p style="grid-column: 1 / -1; text-align: center; color: #a0a0c0;">
+                <p class="projects-empty">
                     Los proyectos se cargarán desde la base de datos...
                 </p>
                 {% endfor %}
@@ -314,7 +314,7 @@
                 O
             </div>
             
-            <div style="text-align: center; margin-bottom: 2rem;">
+            <div class="contact-message-action">
                 <a href="mailto:pino2002@gmail.com" class="btn btn-magenta">
                     Enviar Mensaje
                 </a>

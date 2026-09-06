@@ -105,20 +105,3 @@ function addGlitchEffect() {
 
 // Inicializar efectos glitch cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', addGlitchEffect);
-
-// ===== ANALYTICS (OPCIONAL) =====
-function trackEvent(eventName, eventData) {
-  if (window.gtag) {
-    gtag('event', eventName, eventData);
-  }
-}
-
-// Rastrear clics en enlaces externos
-document.addEventListener('click', function(e) {
-  if (e.target.tagName === 'A' && e.target.target === '_blank') {
-    const href = e.target.href;
-    trackEvent('external_link_click', {
-      'link_url': href
-    });
-  }
-});
