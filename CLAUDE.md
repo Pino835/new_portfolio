@@ -102,14 +102,20 @@ Verificado: arranca sin errores (`manage.py check` limpio) y responde 200 en `ht
   - `render.yaml` (raíz): define el web service (`juan-diego-pino-portfolio`, plan free, runtime Python), build/start command, y env vars (`SECRET_KEY` autogenerado, `DEBUG=False`, `ALLOWED_HOSTS`).
   - `gunicorn==26.2.0` agregado a `requirements.txt` (servidor WSGI de producción; no se puede probar en Windows local por depender de `fcntl`, pero Render corre Linux).
   - `ALLOWED_HOSTS` default en `settings.py` actualizado al nuevo dominio esperado.
-- **Pasos manuales pendientes del usuario en el dashboard de Render** (no automatizables desde aquí): crear el nuevo Web Service apuntando a este repo de GitHub, confirmar que detecte `render.yaml` (Render soporta "Blueprint" a partir de ese archivo) o configurar manualmente build/start command si se prefiere no usar Blueprints.
+- **Servicio creado y publicado por el usuario**: https://juan-diego-pino-portfolio.onrender.com — Blueprint funcionó correctamente con el nombre esperado (`ALLOWED_HOSTS` no necesitó ajuste).
+
+## Cambios ya aplicados (2026-09-05, sexta tanda — bug de media en producción real)
+
+- **Bug encontrado en producción** (no se detectaba en local con `runserver` + `DEBUG=True`): con `DEBUG=False`, Django deja de servir `MEDIA_ROOT` vía `urls.py` (ese bloque solo se activa `if settings.DEBUG`), y Whitenoise por defecto solo sirve `STATIC_ROOT`, no `MEDIA_ROOT`. Resultado: todas las imágenes de proyectos daban 404 en el sitio publicado (`/media/projects/*.png`), aunque en local con `DEBUG=True` se veían bien.
+- Solución: `core/middleware.py` define `MediaWhiteNoiseMiddleware`, una subclase de `WhiteNoiseMiddleware` que además registra `MEDIA_ROOT` con `add_files(..., prefix=MEDIA_URL)` en su `__init__`. Reemplaza a `whitenoise.middleware.WhiteNoiseMiddleware` en `MIDDLEWARE` (`settings.py`). Justificación: las imágenes de proyectos son contenido fijo versionado en git, no uploads dinámicos, así que tiene sentido servirlas igual que los estáticos.
+- Verificado localmente simulando producción (`DEBUG=False python manage.py runserver`): `/`, `/static/css/style.css`, `/static/images/favicon.ico` y `/media/projects/portafolio.png` responden 200. Tests 5/5 OK.
+- **Importante**: si en el futuro se agregan uploads dinámicos reales vía admin (no solo estas 10 imágenes fijas), este middleware seguiría sirviéndolos también — pero recordar que en Render el filesystem es efímero, así que un upload nuevo se serviría hasta el próximo restart/deploy y luego desaparecería (ver punto de Postgres/S3 pendiente abajo).
 
 ## Problemas conocidos / deuda técnica (pendientes)
 
-1. **Persistencia de datos dinámicos en Render**: SQLite + filesystem efímero implica pérdida de proyectos nuevos cargados vía admin (y de imágenes subidas ahí) en cada deploy. Las imágenes de los 10 proyectos actuales ya están resueltas (versionadas en `media/projects/`), pero cualquier proyecto **nuevo** agregado desde el admin en producción se perderá al redeployar. Recomendado a futuro: Postgres (Render lo ofrece gratis) + storage externo (S3/Cloudinary) para uploads dinámicos.
-2. No hay `render.yaml`/`Procfile` versionado — el build/start command de Render no está documentado en el repo. Falta confirmar que el build command incluya `pip install -r requirements.txt && python manage.py collectstatic --noinput && python manage.py migrate`.
-3. Ruta de admin personalizada (`/admin_portfolio_jdp/`) — está bien como medida de oscurecimiento, pero no reemplaza autenticación fuerte.
-4. `og:image` usa `profile.jpg` (800x800, cuadrada) en vez de un banner 1200x630 dedicado — mejora opcional, no urgente.
+1. **Persistencia de datos dinámicos en Render**: SQLite + filesystem efímero implica pérdida de proyectos nuevos cargados vía admin (y de imágenes subidas ahí) en cada deploy/restart. Las imágenes de los 10 proyectos actuales ya están resueltas (versionadas en `media/projects/`, servidas por `MediaWhiteNoiseMiddleware`), pero cualquier proyecto **nuevo** agregado desde el admin en producción se perderá. Recomendado a futuro: Postgres (Render lo ofrece gratis) + storage externo (S3/Cloudinary) para uploads dinámicos.
+2. Ruta de admin personalizada (`/admin_portfolio_jdp/`) — está bien como medida de oscurecimiento, pero no reemplaza autenticación fuerte.
+3. `og:image` usa `profile.jpg` (800x800, cuadrada) en vez de un banner 1200x630 dedicado — mejora opcional, no urgente.
 
 ## Convenciones / notas
 
