@@ -154,6 +154,14 @@ El usuario cambió de foco profesional: ya no se presenta como "Full-Stack Devel
 - Servicio nuevo publicado y funcionando: https://juan-diego-pino-portfolio.onrender.com — home 200, admin accesible (login), 14 proyectos cargados correctamente vía `seed_projects` (incluidos los 4 nuevos: Renombrador, Robot Clasificador, Módulo de Logs, Renombrador Configurable).
 - Superusuario del admin creado exitosamente con las env vars; el usuario ya confirmó login y **eliminó `DJANGO_SUPERUSER_PASSWORD` del dashboard de Render** tras el primer acceso (buena práctica, ya no queda la contraseña real expuesta ahí).
 
+## Cambios ya aplicados (2026-09-07, décima tanda — soporte Power BI)
+
+- El usuario también da soporte con Power BI en su trabajo actual (Grupo Inteca/Mercasa): conexión con bases de datos de origen, campos nuevos, tablas y filtros.
+- `index.html`: agregado "Brindo soporte en Power BI..." a la descripción de la experiencia de Auxiliar Administrativo, más el badge `Power BI` en `experience-tech`.
+- Habilidades: tarjeta "🗄️ Bases de Datos" renombrada a "🗄️ Bases de Datos & BI", agregado tag `Power BI`.
+- Verificado en local: `manage.py check` limpio, tests 5/5 OK.
+- **Pendiente**: agregar la misma mención al CV (descripción del puesto actual + sección Habilidades) — el usuario edita el CV manualmente en Word/PDF, no es un archivo que este proyecto genere.
+
 ## Convenciones / notas
 
 - El usuario prefiere trabajar en español; todos los mensajes de commit existentes están en español y numerados ("Commit #10: ...").
