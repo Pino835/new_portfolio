@@ -162,6 +162,20 @@ El usuario cambió de foco profesional: ya no se presenta como "Full-Stack Devel
 - Verificado en local: `manage.py check` limpio, tests 5/5 OK.
 - **Pendiente**: agregar la misma mención al CV (descripción del puesto actual + sección Habilidades) — el usuario edita el CV manualmente en Word/PDF, no es un archivo que este proyecto genere.
 
+## Cambios ya aplicados (2026-09-07, onceava tanda — repos de GitHub para 2 proyectos)
+
+- El usuario tenía dos proyectos de automatización reales en `C:\Repo\Renombrador` y `C:\Repo\Renombrador_general` (código de trabajo hecho para Grupo Inteca/Mercasa) y pidió subirlos a su GitHub personal.
+- **Revisión de seguridad antes de subir**: ambos proyectos contenían datos sensibles de la empresa — 8282 códigos de cliente reales (`codigos_cliente_confirmados.txt`), números de factura reales, PDFs de comprobantes bancarios reales en `RESULTADO/`, logs de ejecución con datos reales, y en el caso de `Renombrador_general`, la `settings.json` con configuración específica de bancos (Davivienda, BCR) del cliente real. `Renombrador_general` además ya era un repo git conectado a Bitbucket de la empresa (`grupointeca/renombrador_general`).
+- Se crearon **copias limpias** en un directorio temporal, incluyendo solo código fuente, scripts de instalación, `requirements.txt` y documentación genérica (sin nombres de empresa/cliente ni datos reales — se verificó con grep antes de subir). Se inicializó git desde cero en cada copia (sin arrastrar el historial de Bitbucket).
+- Publicados como 2 repos nuevos e independientes en GitHub del usuario:
+  - https://github.com/Pino835/renombrador-facturas (el simple, un solo tipo de documento)
+  - https://github.com/Pino835/renombrador-documentos-configurable (la versión generalizada, con asistente de configuración)
+- Los 2 proyectos correspondientes en el portafolio (`Renombrador de Documentos por Contenido` y `Renombrador de Archivos Configurable`) ahora tienen `github_url` apuntando a estos repos reales (antes estaban en `None` por ser internos/sin repo público).
+- Creado `core/management/commands/update_project_links.py`: comando idempotente que actualiza `github_url` de proyectos existentes por título — a diferencia de `seed_projects` (que solo corre si la tabla está vacía), este se agregó a `build.sh` para correr en **todos** los builds, ya que actualiza registros existentes sin duplicar nada.
+- `core/fixtures/initial_projects.json` regenerado con los links nuevos (por si la tabla se vacía y se re-siembra desde cero en el futuro).
+- Verificado en local: `manage.py check` limpio, tests 5/5 OK, comando probado y confirmado idempotente.
+- **Pendiente mencionado por el usuario**: aún falta traer al portafolio el "Robot Clasificador de Documentos con IA" y el "Módulo de Logs" (ya existen como proyectos en el portafolio pero sin repo — son proyectos de la empresa, probablemente requerirán la misma revisión de seguridad antes de publicarse, si es que se pueden publicar).
+
 ## Convenciones / notas
 
 - El usuario prefiere trabajar en español; todos los mensajes de commit existentes están en español y numerados ("Commit #10: ...").

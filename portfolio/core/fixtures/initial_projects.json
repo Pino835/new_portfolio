@@ -3,7 +3,7 @@
     "title": "Renombrador de Documentos por Contenido",
     "description": "Automatización que revisa documentos de forma individual, extrae datos relevantes de su contenido y renombra cada archivo según esa información, eliminando el proceso manual de identificación y renombrado.",
     "technologies": "Python, IA Generativa",
-    "github_url": "",
+    "github_url": "https://github.com/Pino835/renombrador-facturas",
     "demo_url": "",
     "order": -4,
     "image": ""
@@ -30,7 +30,7 @@
     "title": "Renombrador de Archivos Configurable",
     "description": "Evolución del primer renombrador, generalizado para adaptarse a cualquier tipo de documento según reglas de configuración, ampliando su uso más allá del caso original.",
     "technologies": "Python, IA Generativa",
-    "github_url": "",
+    "github_url": "https://github.com/Pino835/renombrador-documentos-configurable",
     "demo_url": "",
     "order": -1,
     "image": ""

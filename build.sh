@@ -11,6 +11,10 @@ python manage.py migrate
 # builds siguientes).
 python manage.py seed_projects
 
+# Actualiza links de GitHub de proyectos ya existentes (idempotente, corre
+# siempre, no depende de si la tabla estaba vacia o no).
+python manage.py update_project_links
+
 # Crea el superusuario del admin si no existe todavia. Requiere las env vars
 # DJANGO_SUPERUSER_USERNAME, DJANGO_SUPERUSER_EMAIL y DJANGO_SUPERUSER_PASSWORD
 # configuradas en el dashboard de Render (nunca en el codigo). Si ya existe un
